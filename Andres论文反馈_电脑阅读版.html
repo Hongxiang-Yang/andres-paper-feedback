@@ -50,6 +50,30 @@
       .status{padding:30px 32px}.status ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 32px}
       footer{padding-top:18px}
     }
+    /* ── Toggle: 未解决 / 已解决 ── */
+    .page-card,.page-card.mohamed-card,#email ol li{cursor:pointer;user-select:none;transition:border-color .3s,background .3s,box-shadow .3s}
+    .page-card{border-left:4px solid #ef4444!important}
+    .page-card.resolved{border-left-color:var(--green)!important;background:#0d2818!important;box-shadow:0 10px 30px rgba(99,220,176,.1)!important}
+    .page-card.resolved .page-label{color:var(--green)!important}
+    .page-card.positive{border-left-color:#ef4444!important;background:#111827!important}
+    .page-card.positive.resolved{border-left-color:var(--green)!important;background:#0d2818!important}
+    #email ol li{border-left:4px solid #ef4444;transition:border-color .3s,background .3s}
+    #email ol li.resolved{border-left-color:var(--green)!important;background:#0d2818!important}
+    #email ol li.resolved .num{background:var(--green)}
+    .page-card:hover,#email ol li:hover{filter:brightness(1.08)}
+    .page-card::after{content:"✕ 未解决";position:absolute;top:14px;right:14px;padding:3px 10px;border-radius:999px;background:rgba(239,68,68,.18);color:#ef4444;font:800 .68rem/1.4 system-ui,sans-serif;letter-spacing:.03em;pointer-events:none;transition:all .3s}
+    .page-card.resolved::after{content:"✓ 已解决";background:rgba(99,220,176,.15);color:var(--green)}
+    .page-card{position:relative}
+    #email ol li{position:relative}
+    #email ol li::after{content:"✕ 未解决";position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:999px;background:rgba(239,68,68,.18);color:#ef4444;font:800 .68rem/1.4 system-ui,sans-serif;letter-spacing:.03em;pointer-events:none;transition:all .3s}
+    #email ol li.resolved::after{content:"✓ 已解决";background:rgba(99,220,176,.15);color:var(--green)}
+    /* ── 进度条 ── */
+    .progress-wrap{max-width:720px;margin:0 0 28px;padding:16px 20px;border:1px solid var(--line);border-radius:18px;background:#111827;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+    .progress-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;font-size:.88rem;font-weight:700}
+    .progress-head .done{color:var(--green)}.progress-head .total{color:var(--muted)}
+    .progress-track{height:10px;border-radius:99px;background:#1e293b;overflow:hidden}
+    .progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#34d399,var(--green));transition:width .45s ease}
+    .progress-hint{margin-top:8px;font-size:.72rem;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -59,6 +83,7 @@
   <p class="lede">两位评阅者的意见分别标注来源；内容相同的意见也保留对应关系，方便逐条核对。</p>
   <a class="solution-link" href="Andres论文反馈_电脑解决方案.html"><span><strong>查看全部 38 条解决方案</strong><small>用最简单的话告诉你：应该怎么改</small></span><b>→</b></a>
   <div class="stats"><div><strong>18</strong><span>Andres 批注</span></div><div><strong>20</strong><span>Mohamed 批注</span></div><div><strong>2</strong><span>评阅者</span></div></div>
+  <div class="progress-wrap"><div class="progress-head"><span>修改进度</span><span><span class="done" id="resolvedCount">0</span><span class="total"> / <span id="totalCount">0</span> 已解决</span></span></div><div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div><p class="progress-hint">💡 点击任意卡片标记为「已解决」，再次点击可撤销。状态会自动保存在浏览器中。</p></div>
 
   <nav><a href="#handwriting">Andres 批注</a><a href="#mohamed">Mohamed 批注</a><a href="#email">Andres 邮件总结</a><a href="#status">当前稿状态</a></nav>
 
@@ -117,5 +142,45 @@
 
   <footer><span>Andres 与 Mohamed 论文反馈 · 仅供个人修改时查阅</span><a href="#top">返回顶部 ↑</a></footer>
 </main>
+<script>
+(function(){
+  var KEY='andres-mohamed-feedback-resolved';
+  // Collect all toggleable cards: handwriting cards + mohamed cards + email items
+  var cards=[].slice.call(document.querySelectorAll('#handwriting .page-card, #mohamed .page-card, #email ol li'));
+  var saved=[];
+  try{saved=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){saved=[];}
+
+  var resolvedEl=document.getElementById('resolvedCount');
+  var totalEl=document.getElementById('totalCount');
+  var fillEl=document.getElementById('progressFill');
+  totalEl.textContent=cards.length;
+
+  function updateProgress(){
+    var n=0;
+    cards.forEach(function(c){if(c.classList.contains('resolved'))n++;});
+    resolvedEl.textContent=n;
+    fillEl.style.width=(cards.length?Math.round(n/cards.length*100):0)+'%';
+  }
+
+  function saveState(){
+    var arr=[];
+    cards.forEach(function(c,i){if(c.classList.contains('resolved'))arr.push(i);});
+    try{localStorage.setItem(KEY,JSON.stringify(arr));}catch(e){}
+  }
+
+  // Initialize
+  cards.forEach(function(card,i){
+    if(saved.indexOf(i)!==-1) card.classList.add('resolved');
+    card.addEventListener('click',function(e){
+      // Don't toggle if clicking a link inside the card
+      if(e.target.tagName==='A'||e.target.closest('a')) return;
+      card.classList.toggle('resolved');
+      saveState();
+      updateProgress();
+    });
+  });
+  updateProgress();
+})();
+</script>
 </body>
 </html>
