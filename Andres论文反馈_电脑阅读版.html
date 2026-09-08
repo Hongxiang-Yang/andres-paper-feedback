@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d18">
-  <title>Andres 论文反馈｜电脑阅读版</title>
+  <title>Andres 与 Mohamed 论文反馈｜电脑阅读版</title>
   <style>
-    :root{--ink:#17223b;--muted:#667085;--paper:#f7f8fc;--line:#dfe3ed;--pink:#c62d76;--green:#1f7a58}
+    :root{--ink:#17223b;--muted:#667085;--paper:#f7f8fc;--line:#dfe3ed;--pink:#c62d76;--blue:#4267d5;--green:#1f7a58}
     *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--paper)}
     body{margin:0;color:var(--ink);background:radial-gradient(circle at 100% 0%,rgba(198,45,118,.08),transparent 24rem),var(--paper);font:17px/1.72 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
     main{width:min(100%,760px);margin:auto;padding:28px 18px 60px}h1,h2,h3,p{margin-top:0}
@@ -19,14 +19,18 @@
     nav{position:sticky;z-index:2;top:0;display:flex;gap:8px;margin:0 -18px 36px;padding:10px 18px;overflow:auto;border-block:1px solid var(--line);background:rgba(247,248,252,.94);backdrop-filter:blur(12px)}
     nav a{flex:none;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:.83rem;font-weight:700;text-decoration:none}
     section{margin-bottom:48px;scroll-margin-top:78px}.page-card{margin:0 0 14px;padding:18px;border:1px solid var(--line);border-left:4px solid var(--pink);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(23,34,59,.045)}
-    .page-label{margin-bottom:10px;color:var(--pink);font:italic 700 .95rem Georgia,serif}.item{padding:13px 0}.item+.item{border-top:1px solid var(--line)}.item p{margin-bottom:0;color:#465169}
+    .page-label{display:flex;align-items:center;gap:9px;margin-bottom:10px;color:var(--pink);font:italic 700 .95rem Georgia,serif}.item{padding:13px 0}.item+.item{border-top:1px solid var(--line)}.item p{margin-bottom:0;color:#465169}
+    #handwriting .page-label::before,#mohamed .page-label::before,#email li>div::before{display:inline-block;padding:3px 8px;border-radius:999px;font:800 .67rem/1.3 system-ui,sans-serif;letter-spacing:.04em}
+    #handwriting .page-label::before,#email li>div::before{content:"Andres";background:rgba(255,112,179,.16);color:var(--pink)}
+    #mohamed .page-label::before{content:"Mohamed";background:rgba(126,166,255,.16);color:var(--blue)}
+    #email li>div::before{margin-bottom:7px}.mohamed-card{border-left-color:var(--blue)}.mohamed-card .page-label{color:var(--blue)}
     .positive{border-left-color:var(--green);background:#ecf9f3}.positive .page-label{color:var(--green)}
     ol{margin:0;padding:0;list-style:none;border-block:1px solid var(--line)}ol li{display:grid;grid-template-columns:32px 1fr;gap:12px;padding:17px 0}ol li+li{border-top:1px solid var(--line)}
     .num{display:grid;width:30px;height:30px;place-items:center;border-radius:50%;background:var(--ink);color:#fff;font-size:.8rem;font-weight:800}ol p{margin-bottom:4px;color:#465169}small{color:var(--pink);font-weight:700}
     .status{padding:22px 18px;border-radius:20px;background:var(--ink);color:#fff}.status h2{margin-bottom:12px}.status ul{display:grid;gap:11px;margin:0;padding:0;list-style:none}.status li{display:grid;grid-template-columns:25px 1fr;gap:10px;color:#e9edf6}.status b{display:grid;width:24px;height:24px;place-items:center;border-radius:50%;background:var(--pink);font-size:.75rem}
     .aside{padding:14px 16px;border-radius:15px;background:#edf0f6;color:#465169;font-size:.9rem}.aside strong{color:var(--ink)}
     footer{display:flex;justify-content:space-between;gap:20px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem}footer a{color:var(--pink);font-weight:800;text-decoration:none}
-    :root{color-scheme:dark;--ink:#eef3ff;--muted:#aab5cb;--paper:#080d18;--line:#2a354c;--pink:#ff70b3;--green:#63dcb0}
+    :root{color-scheme:dark;--ink:#eef3ff;--muted:#aab5cb;--paper:#080d18;--line:#2a354c;--pink:#ff70b3;--blue:#7ea6ff;--green:#63dcb0}
     body{background:radial-gradient(circle at 100% 0%,rgba(255,112,179,.15),transparent 24rem),var(--paper)}.lede,.item p,ol p,.aside{color:#c7d0e2}
     .stats,.page-card{background:#111827;box-shadow:0 10px 30px rgba(0,0,0,.18)}.solution-link{border:1px solid #37445f;background:#151f33}
     nav{background:rgba(8,13,24,.94)}nav a{background:#111827}.positive{background:#102a22}.aside{background:#172033}
@@ -38,8 +42,8 @@
       .lede{max-width:820px;font-size:1.1rem}.solution-link{max-width:720px;padding:18px 22px}.stats{max-width:720px}
       nav{top:0;margin:0 0 42px;padding:12px 0;border-inline:0}
       section{margin-bottom:64px;scroll-margin-top:88px}section>h2{font-size:2rem}
-      #handwriting{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
-      #handwriting>h2,#handwriting>.aside{grid-column:1/-1}.page-card{height:100%;margin:0;padding:22px 24px}
+      #handwriting,#mohamed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+      #handwriting>h2,#handwriting>.aside,#mohamed>h2,#mohamed>.aside{grid-column:1/-1}.page-card{height:100%;margin:0;padding:22px 24px}
       #email ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;border:0}
       #email ol li{padding:18px;border:1px solid var(--line);border-radius:16px;background:#111827}
       #email ol li+li{border-top:1px solid var(--line)}
@@ -50,16 +54,16 @@
 </head>
 <body>
 <main id="top">
-  <p class="eyebrow">ANDRES FEEDBACK · 电脑阅读版</p>
-  <h1>论文修改清单</h1>
-  <p class="lede">按批注版 PDF 页码整理。邮件与手写批注重复的地方仍保留对应关系，方便核对。</p>
-  <a class="solution-link" href="Andres论文反馈_电脑解决方案.html"><span><strong>查看 18 条解决方案</strong><small>用最简单的话告诉你：应该怎么改</small></span><b>→</b></a>
-  <div class="stats"><div><strong>18</strong><span>手写标记</span></div><div><strong>9</strong><span>邮件总结</span></div><div><strong>1</strong><span>正面评价</span></div></div>
+  <p class="eyebrow">ANDRES + MOHAMED FEEDBACK · 电脑阅读版</p>
+  <h1>论文反馈总清单</h1>
+  <p class="lede">两位评阅者的意见分别标注来源；内容相同的意见也保留对应关系，方便逐条核对。</p>
+  <a class="solution-link" href="Andres论文反馈_电脑解决方案.html"><span><strong>查看全部 38 条解决方案</strong><small>用最简单的话告诉你：应该怎么改</small></span><b>→</b></a>
+  <div class="stats"><div><strong>18</strong><span>Andres 批注</span></div><div><strong>20</strong><span>Mohamed 批注</span></div><div><strong>2</strong><span>评阅者</span></div></div>
 
-  <nav><a href="#handwriting">逐页批注</a><a href="#email">邮件总结</a><a href="#status">当前稿状态</a></nav>
+  <nav><a href="#handwriting">Andres 批注</a><a href="#mohamed">Mohamed 批注</a><a href="#email">Andres 邮件总结</a><a href="#status">当前稿状态</a></nav>
 
   <section id="handwriting">
-    <h2>逐页手写批注</h2>
+    <h2>Andres 的逐页手写批注</h2>
     <article class="page-card"><p class="page-label">P1 · 01</p><div class="item"><h3>标题太长，而且 “Social” 重复</h3><p>判断是否需要保留 “Longitudinal”；Andres 认为 “Autoethnography” 已经带有一定的长期、历时研究意味。</p></div></article>
     <article class="page-card"><p class="page-label">P5 · 02–03</p><div class="item"><h3>考虑引用 Goffman</h3><p>用《The Presentation of Self in Everyday Life》的“前台／后台”概念连接 VRChat 中线上与线下的身份呈现。</p></div><div class="item"><h3>删除多余的 g</h3><p>“There remains a gap in g how...” 应改为 “There remains a gap in how...”。</p></div></article>
     <article class="page-card"><p class="page-label">P6 · 04–05</p><div class="item"><h3>给 I 补上左引号</h3><p>“we use I” 中缺少左引号，应使用成对引号。</p></div><div class="item"><h3>进一步交代研究者定位</h3><p>补充你与技术的关系、总体技术经验和网络游戏经历，避免读者自行作出错误假设。</p></div></article>
@@ -73,8 +77,18 @@
     <p class="aside">第 1 页左上角的 “3/9/2026” 是批注日期，不是修改意见。</p>
   </section>
 
+  <section id="mohamed">
+    <h2>Mohamed 的阶段性反馈</h2>
+    <article class="page-card mohamed-card"><p class="page-label">Abstract · M01–03</p><div class="item"><h3>M01 · “新手缺少指导”可能带偏研究问题</h3><p>考虑删除 “Yet newcomers receive little guidance for interpreting these practices.”，否则读者可能以为论文要解决的是新手指导问题，而真正的研究缺口在下一句。</p></div><div class="item"><h3>M02 · “233 daily corpus” 表达不自然</h3><p>核对语法，建议直接写成 “a corpus of 233 diary entries”，避免 “233 daily entry corpus” 或 “233 days corpus” 的歧义。</p></div><div class="item"><h3>M03 · 骚扰与研究者福祉</h3><p>摘要提到骚扰，会让审稿人追问如何保护研究者身心健康。Mohamed 读到方法部分后认为这一点已经处理得很好，保留并核对即可。</p></div></article>
+    <article class="page-card mohamed-card"><p class="page-label">Introduction · M04</p><div class="item"><h3>M04 · 区分 VR 发现与研究方法带来的负担</h3><p>不愿在线下社交可能是长期使用 Social VR 的影响；研究疲劳和把朋友经历写成材料的内疚，则主要源于日记研究方法。两类发现需要明确分开，避免让审稿人以为论文混淆了 VR 使用与研究过程。</p></div></article>
+    <article class="page-card mohamed-card"><p class="page-label">Related Work · M05–06</p><div class="item"><h3>M05 · 删除 “in g how” 中多余的 g</h3><p>应改成 “There remains a gap in how...”。这条与 Andres 的第 03 条相同，两位评阅者都发现了。</p></div><div class="item"><h3>M06 · 不要让结尾看起来只关注新手</h3><p>相关工作结尾目前过度强调 newcomers。应把重点扩展为用户从新手到熟练用户的完整过程，以及不同阶段中社交、头像和身份如何随时间改变。</p></div></article>
+    <article class="page-card mohamed-card"><p class="page-label">Method · M07–13</p><div class="item"><h3>M07 · 在 “At the time of the study” 后写明时间</h3><p>可在括号中加入 “August 2025–July 2026”，让读者立刻知道研究发生在哪段时间。</p></div><div class="item"><h3>M08 · “stand to someone” 含义不清</h3><p>说明究竟是站在某人前面、旁边，还是距离某人多近。</p></div><div class="item"><h3>M09 · 解释从 I 切换到 we 时，we 指谁</h3><p>可写 “When the research team later reviewed...” 或 “When my co-authors and I later reviewed...”。</p></div><div class="item"><h3>M10 · 解释 VRChat 中的 world</h3><p>第一次出现时，用一句话说明 world 是用户进入和活动的独立虚拟空间。</p></div><div class="item"><h3>M11 · 说明如何选择和转述他人的话</h3><p>没有录音时，需要交代日记记录的是记忆中的全部谈话、只对你说的话、重要谈话，还是介于其间，并说明记录发生在会话结束后。</p></div><div class="item"><h3>M12 · 定义什么是 sensitive conversation</h3><p>给出判断标准或例子，并说明这种情况是否实际发生过。</p></div><div class="item"><h3>M13 · Lucero 的 four stages 需要引用</h3><p>在提到 Lucero 的四个阶段时紧跟参考文献，而不是只在段落其他位置笼统引用。</p></div></article>
+    <article class="page-card mohamed-card"><p class="page-label">Results · M14–20</p><div class="item"><h3>M14 · “the new body asked of me” 太像比喻</h3><p>更直接地说明：你当时不知道应该怎样移动、说话或表现，才符合新头像带来的感觉和他人期待。</p></div><div class="item"><h3>M15 · 方法部分说明日记也记录线下事件</h3><p>镜中倒影、室友叫醒你和线下打招呼手势都发生在现实世界。方法部分应说明：当线下事件与 VRChat 经历有关时，也会写入日记。</p></div><div class="item"><h3>M16 · “wakefulness gave way to sleep” 可以更直接</h3><p>改成没有注意到自己正在变累并睡着，避免为了文学感牺牲清楚程度。</p></div><div class="item"><h3>M17 · “when no adult was nearby” 需要说明场所</h3><p>明确是虚拟房间里没有成年用户，还是孩子现实环境中没有成年人；两种情况含义不同。</p></div><div class="item"><h3>M18 · “under the World’s lighting” 难以理解</h3><p>解释具体是哪种光线、头像外观发生了什么变化；如果视觉差异对论点重要，可以考虑用图片展示。</p></div><div class="item"><h3>M19 · 4.1 标题也应体现线下影响</h3><p>本节不只讨论 Social VR 内部现象，还谈到摘下头显后的现实影响。标题可改成类似 “Social Phenomena in Social VR and Their Implications for My Offline Life”。</p></div><div class="item"><h3>M20 · 完善 Ready Player Me 脚注</h3><p>删除 <code>\footnote{}</code> 前面的空格，并说明 Ready Player Me 是什么、网址以及访问日期。</p></div></article>
+    <p class="aside"><strong>范围说明：</strong>Mohamed 表示这轮反馈只审到第 4.2 节结尾，论文后半部分还会继续审阅；他对目前稿件的总体评价是很好。</p>
+  </section>
+
   <section id="email">
-    <h2>邮件中的九条总结</h2>
+    <h2>Andres 邮件中的九条总结</h2>
     <ol>
       <li><span class="num">1</span><div><h3>标题</h3><p>缩短标题，避免 “Social” 重复，并判断是否需要 “Longitudinal”。</p><small>对应手写 01</small></div></li>
       <li><span class="num">2</span><div><h3>Goffman</h3><p>加入前台／后台自我呈现理论，与 VRChat 的线上／线下呈现建立联系。</p><small>对应手写 02</small></div></li>
@@ -101,7 +115,7 @@
     </ul>
   </section>
 
-  <footer><span>仅供个人修改论文时查阅</span><a href="#top">返回顶部 ↑</a></footer>
+  <footer><span>Andres 与 Mohamed 论文反馈 · 仅供个人修改时查阅</span><a href="#top">返回顶部 ↑</a></footer>
 </main>
 </body>
 </html>
