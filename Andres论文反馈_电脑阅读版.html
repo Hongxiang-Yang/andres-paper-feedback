@@ -74,6 +74,17 @@
     .progress-track{height:10px;border-radius:99px;background:#1e293b;overflow:hidden}
     .progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#34d399,var(--green));transition:width .45s ease}
     .progress-hint{margin-top:8px;font-size:.72rem;color:var(--muted)}
+    /* ── 视图切换 ── */
+    nav a.active{background:var(--pink)!important;color:#fff!important;border-color:var(--pink)!important}
+    .view-toggle{cursor:pointer}
+    #view-page{display:none}
+    #view-page.active{display:block}
+    #view-reviewer.hidden{display:none}
+    .page-group{margin-bottom:32px;scroll-margin-top:88px}
+    .page-group-header{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:10px 16px;border-radius:12px;background:#1a2236;font:700 1rem/1.3 Georgia,"Songti SC",serif;color:var(--pink)}
+    .page-group-header .pg-num{display:grid;width:32px;height:32px;place-items:center;border-radius:50%;background:var(--pink);color:#250b18;font:800 .78rem system-ui,sans-serif}
+    #view-page .page-card{margin:0 0 14px}
+    @media(min-width:980px){#view-page{display:none}#view-page.active{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}#view-page .page-group{grid-column:1/-1}#view-page .page-group-inner{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}#view-page .page-card{margin:0}}
   </style>
 </head>
 <body>
@@ -85,8 +96,10 @@
   <div class="stats"><div><strong>18</strong><span>Andres 批注</span></div><div><strong>20</strong><span>Mohamed 批注</span></div><div><strong>2</strong><span>评阅者</span></div></div>
   <div class="progress-wrap"><div class="progress-head"><span>修改进度</span><span><span class="done" id="resolvedCount">0</span><span class="total"> / <span id="totalCount">0</span> 已解决</span></span></div><div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div><p class="progress-hint">💡 点击任意卡片标记为「已解决」，再次点击可撤销。状态会自动保存在浏览器中。</p></div>
 
-  <nav><a href="#handwriting">Andres 批注</a><a href="#mohamed">Mohamed 批注</a><a href="#email">Andres 邮件总结</a><a href="#status">当前稿状态</a></nav>
+  <nav><a href="javascript:void(0)" class="view-toggle active" id="btnReviewer">按评阅者</a><a href="javascript:void(0)" class="view-toggle" id="btnPage">按页码顺序</a><span style="border-left:1px solid var(--line);height:20px;margin:0 4px"></span><a href="#handwriting">Andres 批注</a><a href="#mohamed">Mohamed 批注</a><a href="#email">Andres 邮件总结</a><a href="#status">当前稿状态</a></nav>
 
+  <div id="view-page"></div>
+  <div id="view-reviewer">
   <section id="handwriting">
     <h2>Andres 的逐页手写批注</h2>
     <article class="page-card"><p class="page-label">P1 · 01</p><div class="item"><h3>标题太长，而且 “Social” 重复</h3><p>判断是否需要保留 “Longitudinal”；Andres 认为 “Autoethnography” 已经带有一定的长期、历时研究意味。</p></div></article>
@@ -127,6 +140,7 @@
     </ol>
     <p class="aside" style="margin-top:18px"><strong>邮件附言：</strong>Andres 已把对话转到 Gmail，因为他比 Aalto 邮箱更经常查看 Gmail，包括晚上和周末。这不是论文修改意见。</p>
   </section>
+  </div><!-- /view-reviewer -->
 
   <section id="status" class="status">
     <h2>当前稿快速核对</h2>
@@ -145,7 +159,8 @@
 <script>
 (function(){
   var KEY='andres-mohamed-feedback-resolved';
-  // Collect all toggleable cards: handwriting cards + mohamed cards + email items
+
+  /* ── 1. 所有可切换卡片 ── */
   var cards=[].slice.call(document.querySelectorAll('#handwriting .page-card, #mohamed .page-card, #email ol li'));
   var saved=[];
   try{saved=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){saved=[];}
@@ -161,18 +176,15 @@
     resolvedEl.textContent=n;
     fillEl.style.width=(cards.length?Math.round(n/cards.length*100):0)+'%';
   }
-
   function saveState(){
     var arr=[];
     cards.forEach(function(c,i){if(c.classList.contains('resolved'))arr.push(i);});
     try{localStorage.setItem(KEY,JSON.stringify(arr));}catch(e){}
   }
-
-  // Initialize
+  // Init resolved state + click handlers
   cards.forEach(function(card,i){
     if(saved.indexOf(i)!==-1) card.classList.add('resolved');
     card.addEventListener('click',function(e){
-      // Don't toggle if clicking a link inside the card
       if(e.target.tagName==='A'||e.target.closest('a')) return;
       card.classList.toggle('resolved');
       saveState();
@@ -180,6 +192,120 @@
     });
   });
   updateProgress();
+
+  /* ── 2. 页码排序数据 ── */
+  // pageCards = handwriting(0-9) + mohamed(10-14)，不含 email
+  var pageCards=[].slice.call(document.querySelectorAll('#handwriting .page-card, #mohamed .page-card'));
+  // 每张卡对应的论文页码（用于排序）
+  var pageNums=[
+    1,   // P1·01
+    5,   // P5·02-03
+    6,   // P6·04-05
+    7,   // P7·06-08
+    8,   // P8·09 positive
+    8,   // P8·10-13
+    10,  // P10·14
+    11,  // P11·15
+    12,  // P12·16
+    15,  // P15·17-18
+    1,   // Abstract M01-03
+    3,   // Introduction M04
+    5,   // Related Work M05-06
+    7,   // Method M07-13
+    10   // Results M14-20
+  ];
+  // 页码 → 论文部分名称
+  var sectionNames={
+    1:'Title / Abstract',
+    3:'Introduction',
+    5:'Related Work',
+    6:'Method — 研究者定位',
+    7:'Method — 数据收集与分析',
+    8:'Method — 分析过程',
+    10:'Results — 4.1 节',
+    11:'Results — 4.2 节',
+    12:'Results — 4.3 节',
+    15:'Discussion / Limitations'
+  };
+
+  /* ── 3. 构建页码视图 ── */
+  var viewPage=document.getElementById('view-page');
+  var viewReviewer=document.getElementById('view-reviewer');
+  var btnReviewer=document.getElementById('btnReviewer');
+  var btnPageEl=document.getElementById('btnPage');
+
+  // 排序：先按页码，同页内 Andres 在前
+  var sorted=pageCards.map(function(el,i){return{el:el,page:pageNums[i],idx:i};});
+  sorted.sort(function(a,b){return a.page-b.page||(a.idx-b.idx);});
+
+  // 按页码分组
+  var groups={};
+  sorted.forEach(function(item){
+    if(!groups[item.page]) groups[item.page]=[];
+    groups[item.page].push(item);
+  });
+
+  // 记录每张卡的原始父元素和位置（用于切回评阅者视图）
+  var originalPositions=pageCards.map(function(el){
+    return{el:el,parent:el.parentElement,next:el.nextElementSibling};
+  });
+
+  // 构建 HTML 结构
+  var pageKeys=Object.keys(groups).map(Number).sort(function(a,b){return a-b;});
+  pageKeys.forEach(function(pg){
+    var group=document.createElement('div');
+    group.className='page-group';
+    var header=document.createElement('div');
+    header.className='page-group-header';
+    header.innerHTML='<span class="pg-num">P'+pg+'</span> '+(sectionNames[pg]||'Page '+pg)+' <span style="margin-left:auto;font:800 .72rem system-ui,sans-serif;color:var(--muted)">'+groups[pg].length+' 条</span>';
+    group.appendChild(header);
+    var inner=document.createElement('div');
+    inner.className='page-group-inner';
+    groups[pg].forEach(function(item){
+      // 创建占位符（卡片移走时放在原位）
+      inner.appendChild(document.createElement('div')); // placeholder slot
+    });
+    group.appendChild(inner);
+    viewPage.appendChild(group);
+  });
+
+  var isPageView=false;
+
+  function switchToPage(){
+    if(isPageView) return;
+    isPageView=true;
+    btnPageEl.classList.add('active');
+    btnReviewer.classList.remove('active');
+    viewReviewer.classList.add('hidden');
+    // 把卡片移到页码视图
+    var groupIdx=0;
+    pageKeys.forEach(function(pg){
+      var inner=viewPage.querySelectorAll('.page-group-inner')[groupIdx];
+      inner.innerHTML='';
+      groups[pg].forEach(function(item){
+        inner.appendChild(item.el);
+      });
+      groupIdx++;
+    });
+    viewPage.classList.add('active');
+  }
+
+  function switchToReviewer(){
+    if(!isPageView) return;
+    isPageView=false;
+    btnReviewer.classList.add('active');
+    btnPageEl.classList.remove('active');
+    viewPage.classList.remove('active');
+    // 把卡片移回原位
+    originalPositions.forEach(function(pos){
+      if(pos.next) pos.parent.insertBefore(pos.el,pos.next);
+      else pos.parent.appendChild(pos.el);
+    });
+    viewReviewer.classList.remove('hidden');
+  }
+
+  btnPageEl.addEventListener('click',switchToPage);
+  btnReviewer.addEventListener('click',switchToReviewer);
 })();
 </script>
 </body>
